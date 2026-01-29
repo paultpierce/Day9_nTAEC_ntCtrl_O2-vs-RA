@@ -29,7 +29,7 @@ colnames(sample_info)
 head(sample_info)
 
 # Variables for downstream DEG selection criteria
-pThr <- 0.1 # adj. p-val threshold
+pThr <- 0.05 # adj. p-val threshold
 logFCThr <- 1 # log2 fold-change 
 baseMeanThr <- 5 # filtering expression level of raw counts
 cpmThr <- 1 # copy-per-million
@@ -79,11 +79,10 @@ head(deseq_result_ordered)
 
 # Cont. filtering but by p adj value and log 2 FC as set by values pThr & logFCThr, respectively
 filtered_data_DEGs <- deseq_result %>% 
-                        filter(deseq_result$padj < pThr)
+                        filter(deseq_result$pvalue < pThr)
 
 filtered_data_DEGs <- filtered_data_DEGs %>% 
                         filter(abs(filtered_data_DEGs$log2FoldChange) > logFCThr)
-
 
 
 

@@ -47,22 +47,22 @@ dds <- DESeqDataSetFromMatrix(countData = count_data,
                               colData = sample_info,
                               design = ~ condition)
 
-ddsColl <- collapseReplicates(dds, groupby = dds$bio_ID)
+######## ddsColl <- collapseReplicates(dds, groupby = dds$bio_ID)
 ######## Ask Abhrajit about the above due to perceived technical replicates in raw counts file
 
 
 # Setup factor levels for condition in relation to dds object
-ddsColl$condition <- factor(ddsColl$condition, levels = c("O2", "RA"))
+dds$condition <- factor(dds$condition, levels = c("O2", "RA"))
 
 
 # Filter genes based on number of counts from value = baseMeanThr
-keep <- rowSums(counts(ddsColl)) >= baseMeanThr
-ddsColl <- ddsColl[keep, ]
+keep <- rowSums(counts(dds)) >= baseMeanThr
+dds <- dds[keep, ]
 
 # Perform stat test/analysis to ID DEGs
-ddsColl <- DESeq(ddsColl)
+dds <- DESeq(dds)
 
-deseq_result <- results(ddsColl)
+deseq_result <- results(dds)
 head(deseq_result)
 
 
@@ -81,7 +81,8 @@ head(deseq_result_ordered)
 filtered_data_DEGs <- deseq_result %>% 
                         filter(deseq_result$padj < pThr)
 
-filtered_data_DEGs <- filtered_data_DEGs %>% filter(abs(filtered_data_DEGs$log2FoldChange) > logFCThr)
+filtered_data_DEGs <- filtered_data_DEGs %>% 
+                        filter(abs(filtered_data_DEGs$log2FoldChange) > logFCThr)
 
 
 

@@ -29,10 +29,10 @@ colnames(sample_info)
 head(sample_info)
 
 # Variables for downstream DEG selection criteria
-pThr <- 0.05 # for adj. p-val threshold
-logFCThr <- 1 # for log2 fold-change 
-baseMeanThr <- 10 # for filtering expression level of raw counts
-cpmThr <- 1 # for copy-per-million
+pThr <- 0.1 # adj. p-val threshold
+logFCThr <- 1 # log2 fold-change 
+baseMeanThr <- 5 # filtering expression level of raw counts
+cpmThr <- 1 # copy-per-million
 
 
 # Set factors for condition
@@ -47,15 +47,41 @@ dds <- DESeqDataSetFromMatrix(countData = count_data,
                               colData = sample_info,
                               design = ~ condition)
 
+ddsColl <- collapseReplicates(dds, groupby = dds$bio_ID)
+######## Ask Abhrajit about the above due to perceived technical replicates in raw counts file
+
 
 # Setup factor levels for condition in relation to dds object
-dds$condition <- factor(dds$condition, levels = c("O2", "RA"))
+ddsColl$condition <- factor(ddsColl$condition, levels = c("O2", "RA"))
+
+
+# Filter genes based on number of counts from value = baseMeanThr
+keep <- rowSums(counts(ddsColl)) >= baseMeanThr
+ddsColl <- ddsColl[keep, ]
+
+# Perform stat test/analysis to ID DEGs
+ddsColl <- DESeq(ddsColl)
+
+deseq_result <- results(ddsColl)
+head(deseq_result)
+
+
+# Change DESeq object to R object as a data frame
+deseq_result <- as.data.frame(deseq_result)
+class(deseq_result)
+
+
+# Order DESeq results by p value
+deseq_result_ordered <- deseq_result[order(deseq_result$pvalue), ]
+head(deseq_result_ordered)
 
 
 
+# Cont. filtering but by p adj value and log 2 FC as set by values pThr & logFCThr, respectively
+filtered_data_DEGs <- deseq_result %>% 
+                        filter(deseq_result$padj < pThr)
 
-
-
+filtered_data_DEGs <- filtered_data_DEGs %>% filter(abs(filtered_data_DEGs$log2FoldChange) > logFCThr)
 
 
 

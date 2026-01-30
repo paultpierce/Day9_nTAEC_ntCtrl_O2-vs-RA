@@ -65,6 +65,10 @@ dds <- DESeq(dds)
 deseq_result <- results(dds)
 head(deseq_result)
 
+# Plot MA for DESeq result before transforming into data frame
+plotMA(deseq_result, ylim = c(-4, 4))
+
+
 
 # Change DESeq object to R object as a data frame
 deseq_result <- as.data.frame(deseq_result)

@@ -52,7 +52,7 @@ gene_data = cbind(metadata, counts = as.numeric(gene_counts))
 ggplot(gene_data, aes(x = condition, y = counts, fill = condition)) +
         geom_boxplot() +
         theme_bw(base_size = 14) +
-        xlab("SFTPC") +
+        xlab(NULL) +
         labs(title = paste0(gene_id, " raw counts by condition"))
 
 

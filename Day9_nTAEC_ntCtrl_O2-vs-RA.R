@@ -63,6 +63,42 @@ dds <- DESeqDataSetFromMatrix(countData = counts,
                               design = ~ condition)
 
 
+# Add collapseReplicates condition to combine tech replicates
+
+ddsColl <- collapseReplicates(dds, groupby = dds$bio_ID)
+dds <- ddsColl
+
+# Determine size factors to use for normalization during DESeq
+
+dds <- estimateSizeFactors(dds)
+sizeFactors(dds)
+
+# Extract normalized counts
+
+normalized_counts <- counts(dds, normalized = TRUE)
+head(normalized_counts)
+
+
+# Quality assessment of normalized count data with heatmaps
+
+library(pheatmap)
+library(RColorBrewer)
+
+
+vsd <- vst(dds, blind = TRUE)
+vsd_mat <- assay(vsd)
+vsd_cor <- cor(vsd_mat)
+View(vsd_cor)
+
+pheatmap(vsd_cor, annotation = select(metadata, condition))
+
+
+
+# QA of normalized counts via PCA
+
+plotPCA(vsd, intgroup = "condition")
+
+
 
 
 

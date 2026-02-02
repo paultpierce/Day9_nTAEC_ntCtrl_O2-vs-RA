@@ -65,8 +65,15 @@ dds <- DESeqDataSetFromMatrix(countData = counts,
 
 # Add collapseReplicates condition to combine tech replicates
 
-ddsColl <- collapseReplicates(dds, groupby = dds$bio_ID)
+ddsColl <- collapseReplicates(dds, groupby = dds$bio_ID, renameCols = FALSE)
 dds <- ddsColl
+
+
+# Pre-filter genes based on number of counts
+
+keep <- rowSums(counts(dds) >= 5) >= 5
+dds <- dds[keep, ]
+
 
 # Determine size factors to use for normalization during DESeq
 
@@ -81,6 +88,7 @@ head(normalized_counts)
 
 # Quality assessment of normalized count data with heatmaps
 
+library(ggrepel)
 library(pheatmap)
 library(RColorBrewer)
 
@@ -90,13 +98,22 @@ vsd_mat <- assay(vsd)
 vsd_cor <- cor(vsd_mat)
 View(vsd_cor)
 
-pheatmap(vsd_cor, annotation = select(metadata, condition))
+pheatmap(vsd_cor, annotation = select(metadata, condition), 
+         main = "Hierarchical heatmap analysis")
 
 
 
 # QA of normalized counts via PCA
 
-plotPCA(vsd, intgroup = "condition")
+plotPCA(vsd, intgroup = "condition") +
+  ggtitle("PCA by condition") +
+  geom_text_repel(aes(label = sample_ID))
+
+
+
+# 
+
+
 
 
 

@@ -71,7 +71,7 @@ dds <- ddsColl
 
 # Pre-filter genes based on number of counts
 
-keep <- rowSums(counts(dds) >= 5) >= 5
+keep <- rowSums(counts(dds) >= 10) >= 5
 dds <- dds[keep, ]
 
 
@@ -99,7 +99,7 @@ vsd_cor <- cor(vsd_mat)
 View(vsd_cor)
 
 pheatmap(vsd_cor, annotation = select(metadata, condition), 
-         main = "Hierarchical heatmap analysis")
+         main = "Hierarchical heatmap analysis by condition")
 
 
 
@@ -111,11 +111,62 @@ plotPCA(vsd, intgroup = "condition") +
 
 
 
-# 
+# DESeq analysis of dds object
+
+dds <- DESeq(dds)
+
+
+# DESeq model - dispersion testing
+
+plotDispEsts(dds)
+
+
+# Compare expression by conditions O2 vs RA
+
+res <- results(dds, contrast = c("condition", "O2", "RA"))
+head(res)
+
+
+# Convert res DESeq into data frame and combine with genes to get Gene names
+
+res_df <- as.data.frame(res)
+head(res_df)
+head(genes)
+
+res_df = merge(genes, res_df, by = "row.names")
+res_df$Row.names <- NULL
+head(res_df)
+
+
+# Order DESeq results by p adj value
+
+res_df_ordered_padj <- res_df[order(res_df$padj), ]
+head(res_df_ordered_padj)
+
+
+# Cont. filtering but by raw pval value and log2FC
+filtered_data_DEGs_pval <- res_df %>% 
+  filter(res_df$pvalue < 0.1)
+
+filtered_data_DEGs_pval <- filtered_data_DEGs_pval %>% 
+  filter(abs(filtered_data_DEGs_pval$log2FoldChange) > 0.5)
+
+
+# Cont. filtering but by padj value and log2FC
+filtered_data_DEGs_padj <- res_df %>% 
+  filter(res_df$padj < 0.1)
+
+filtered_data_DEGs_padj <- filtered_data_DEGs_padj %>% 
+  filter(abs(filtered_data_DEGs_padj$log2FoldChange) > 0.5)
 
 
 
+# Visualizations
 
+library(EnhancedVolcano)
+
+EnhancedVolcano(res_df, lab = rownames(res_df), 
+                x = "log2FoldChange", y = "pvalue")
 
 
 

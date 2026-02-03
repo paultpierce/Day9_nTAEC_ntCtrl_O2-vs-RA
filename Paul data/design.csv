@@ -1,0 +1,15 @@
+﻿sample_ID,condition,bio_ID
+Donor01_ntCtrl_O2_1,O2,1
+Donor01_ntCtrl_O2_2,O2,1
+Donor02_ntCtrl_O2,O2,2
+Donor03_ntCtrl_O2,O2,3
+Donor04_ntCtrl_O2_1,O2,4
+Donor04_ntCtrl_O2_2,O2,4
+Donor05_ntCtrl_O2,O2,5
+Donor01_ntCtrl_RA_1,RA,6
+Donor01_ntCtrl_RA_2,RA,6
+Donor02_ntCtrl_RA,RA,7
+Donor03_ntCtrl_RA,RA,8
+Donor04_ntCtrl_RA_1,RA,9
+Donor04_ntCtrl_RA_2,RA,9
+Donor05_ntCtrl_RA,RA,10

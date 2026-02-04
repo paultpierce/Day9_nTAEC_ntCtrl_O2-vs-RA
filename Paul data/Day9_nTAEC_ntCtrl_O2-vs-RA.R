@@ -86,11 +86,29 @@ normalized_counts <- counts(dds, normalized = TRUE)
 head(normalized_counts)
 
 
-# Combine gene names to normalized_counts dataframe and write.csv out for AG
+# Combine gene names to normalized_counts dataframe
 
 normalized_counts_df <- as.data.frame(normalized_counts)
 normalized_counts_df <- merge(genes, normalized_counts_df, by = "row.names")
 normalized_counts_df$Row.names <- NULL
+
+
+# Order columns as O2, RA, O2, RA ... alternating between Donors for AG
+
+normalized_counts_df <- normalized_counts_df %>% 
+                          relocate(Donor01_ntCtrl_RA_1, .after = Donor01_ntCtrl_O2_1) %>% 
+                          relocate(Donor02_ntCtrl_RA, .after = Donor02_ntCtrl_O2) %>%
+                          relocate(Donor03_ntCtrl_RA, .after = Donor03_ntCtrl_O2) %>%
+                          relocate(Donor04_ntCtrl_RA_1, .after = Donor04_ntCtrl_O2_1) %>%
+                          relocate(Donor05_ntCtrl_RA, .after = Donor05_ntCtrl_O2) %>% 
+                          
+                          rename(Donor01_ntCtrl_O2 = Donor01_ntCtrl_O2_1) %>% 
+                          rename(Donor01_ntCtrl_RA = Donor01_ntCtrl_RA_1) %>% 
+                          rename(Donor04_ntCtrl_O2 = Donor04_ntCtrl_O2_1) %>% 
+                          rename(Donor04_ntCtrl_RA = Donor04_ntCtrl_RA_1)
+  
+  
+# Write normalized counts into csv file
 
 write.csv(normalized_counts_df, file = "Day9_ntCtrl_O2-vs-RA_NormData_Paul.csv", row.names = FALSE)
 

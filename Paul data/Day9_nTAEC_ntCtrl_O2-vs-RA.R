@@ -86,6 +86,15 @@ normalized_counts <- counts(dds, normalized = TRUE)
 head(normalized_counts)
 
 
+# Combine gene names to normalized_counts dataframe and write.csv out for AG
+
+normalized_counts_df <- as.data.frame(normalized_counts)
+normalized_counts_df <- merge(genes, normalized_counts_df, by = "row.names")
+normalized_counts_df$Row.names <- NULL
+
+write.csv(normalized_counts_df, file = "Day9_ntCtrl_O2-vs-RA_NormData_Paul.csv", row.names = FALSE)
+
+
 # Quality assessment of normalized count data with heatmaps
 
 library(ggrepel)

@@ -93,7 +93,7 @@ normalized_counts_df <- merge(genes, normalized_counts_df, by = "row.names")
 normalized_counts_df$Row.names <- NULL
 
 
-# Order columns as O2, RA, O2, RA ... alternating between Donors for AG
+# Order columns as O2, RA, O2, RA ... alternating between Donors and renaming for AG
 
 normalized_counts_df <- normalized_counts_df %>% 
                           relocate(Donor01_ntCtrl_RA_1, .after = Donor01_ntCtrl_O2_1) %>% 
@@ -194,8 +194,6 @@ library(EnhancedVolcano)
 
 EnhancedVolcano(res_df, lab = rownames(res_df), 
                 x = "log2FoldChange", y = "pvalue")
-
-
 
 
 

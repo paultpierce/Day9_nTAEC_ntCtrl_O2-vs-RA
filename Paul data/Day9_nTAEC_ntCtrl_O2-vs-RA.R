@@ -171,29 +171,35 @@ res_df_ordered_padj <- res_df[order(res_df$padj), ]
 head(res_df_ordered_padj)
 
 
+
+
 # Cont. filtering but by raw pval value and log2FC
 filtered_data_DEGs_pval <- res_df %>% 
-  filter(res_df$pvalue < 0.1)
+  filter(res_df$pvalue < 0.05)
 
 filtered_data_DEGs_pval <- filtered_data_DEGs_pval %>% 
-  filter(abs(filtered_data_DEGs_pval$log2FoldChange) > 0.5)
+  filter(abs(filtered_data_DEGs_pval$log2FoldChange) > 1)
+
+
 
 
 # Cont. filtering but by padj value and log2FC
-filtered_data_DEGs_padj <- res_df %>% 
-  filter(res_df$padj < 0.1)
+# filtered_data_DEGs_padj <- res_df %>% 
+# filter(res_df$padj < 0.1)
 
-filtered_data_DEGs_padj <- filtered_data_DEGs_padj %>% 
-  filter(abs(filtered_data_DEGs_padj$log2FoldChange) > 0.5)
+# filtered_data_DEGs_padj <- filtered_data_DEGs_padj %>% 
+#  filter(abs(filtered_data_DEGs_padj$log2FoldChange) > 0.5)
 
 
 
-# Visualizations
 
-library(EnhancedVolcano)
 
-EnhancedVolcano(res_df, lab = rownames(res_df), 
-                x = "log2FoldChange", y = "pvalue")
+#### Visualizations ####
+
+#library(EnhancedVolcano)
+
+#EnhancedVolcano(res_df, lab = rownames(res_df), 
+#               x = "log2FoldChange", y = "pvalue")
 
 
 
